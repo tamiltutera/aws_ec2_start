@@ -1,0 +1,31 @@
+---
+- hosts: all
+  gather_facts: false
+  connection: local
+  tasks:
+    - name: Check current state of the EC2 Instance
+      command: aws ec2 describe-instances --instance-ids {{ instance_id }} --region {{ region }} --output text --query 'Reservations[*].Instances[*].State.Name'
+      register: instance_state
+      delegate_to: localhost
+    - debug:
+        msg: "{{ instance_state.stdout }}"
+      delegate_to: localhost 
+    - fail:
+        msg: "Instance is already running"
+      when: instance_state.stdout == "running"
+      delegate_to: localhost
+    - set_fact:
+        current_state: "{{ instance_state.stdout }}"
+     # AWS Instance starting
+    - name: starting the AWS EC2 Instances
+      command: aws ec2 start-instances --instance-ids {{ instance_id }} --region {{ region }}
+      when: instance_state.stdout != "running"
+      register: start_instance_state
+      delegate_to: localhost
+    - name: wait for starting the instance
+      wait_for:
+        timeout: 60
+    - name: checking the status of the instance
+      debug:
+        msg: "Instance started successfully"
+      when: start_instance_state.changed == true
