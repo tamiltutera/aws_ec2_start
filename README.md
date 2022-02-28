@@ -1,4 +1,4 @@
-# aws_ec2_start
+# AWS_EC2_start
 ### Youtube Channel: https://www.youtube.com/c/TamilTutEra
 ### Video Link: https://youtu.be/7DPvDHsZQUw
 ## Tamiltutera Ansible in Tamil - How to start the AWS EC2 Instance using AWS CLI Ansible Playbook
